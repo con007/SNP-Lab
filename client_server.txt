@@ -1,0 +1,49 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include <fcntl.h>
+#include<errno.h>
+#include<string.h>
+int main()
+{
+        int pfd1[2],pfd2[2],n,pid,fd;
+        char buff[1024],fn[20];
+        pipe(pfd1);
+        pipe(pfd2);
+        pid = fork();
+        if(pid == 0)          //server
+        {
+                close(pfd1[1]);
+                close(pfd2[0]);
+                n = read(pfd1[0],fn,sizeof(fn));
+               printf("%d\n",n);
+                fd = open(fn,O_RDONLY);
+                if(fn<0)
+                {
+                        printf("Error\n");
+                }
+                else
+                {
+                        printf("Success\n");
+                }
+
+                while((n=read(fd,buff,sizeof(buff))) > 0)
+                {
+                        write(pfd2[1],buff,n);
+                }
+        }
+        else                     //client
+        {
+                close(pfd1[0]);
+                close(pfd2[1]);
+                printf("Enter file name \n");
+                scanf("%s",&fn);
+                int q = strlen(fn);
+                write(pfd1[1],fn,q);
+                while((n = read(pfd2[0],buff,sizeof(buff))) > 0)
+                {
+                        write(1,buff,n);
+                }
+        }
+}
