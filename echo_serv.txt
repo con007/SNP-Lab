@@ -1,0 +1,44 @@
+#include<stdio.h>
+#include<fcntl.h>
+#include<sys/socket.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+
+int main(int argc, char **argv)
+{
+        int lfd,cfd,n;
+        char str[1000];
+        pid_t cpid;
+        socklen_t clilen;
+        struct sockaddr_in cliaddr,servaddr;
+
+        lfd= socket(AF_INET, SOCK_STREAM, 0);
+
+
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        servaddr.sin_port = htons(4446);
+
+        bind(lfd, (struct sockaddr *) &servaddr,sizeof(servaddr));
+        if(bind==-1)
+                printf("Nhi hoga");
+        listen(lfd,5);
+
+        for(;;)
+        {
+                clilen = sizeof(cliaddr);
+                cfd    = accept(lfd,(struct sockaddr *) &cliaddr,&clilen);
+
+                if((cpid=fork())==0)
+                {
+                        close(lfd);
+                        n=read(cfd,str,sizeof(str));
+                        write(cfd,str,n);
+                        printf("%s",str);
+                        exit(0);
+                }
+                close(cfd);
+        }
+
+}
+                                 

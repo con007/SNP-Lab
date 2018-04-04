@@ -1,0 +1,28 @@
+#include<stdio.h>
+#include<fcntl.h>
+#include<string.h>
+#include<stlib.h>
+#include<sys/socket.h>
+#include <netinet/in.h>
+
+
+int main(int argc, char **argv)
+{
+	int sfd,m;
+	char str1[1000],str2[1000];
+	socklen_t clilen;
+	struct sockaddr_in servaddr;
+	
+	sfd= Socket(AF_INET, SOCK_STREAM, 0);
+	
+	
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(1234);
+	inet_pton(AF_INET,"192.168.4.3",&servaddr.sin_addr);
+	connect(sfd,(struct sockaddr *), sizeof(servaaddr));
+
+	scanf("%s",&str1);
+	write(sfd,str1,sizeof(str1));
+	m=read(sfd,str2,sizeof(str2));
+	write(1,sfd,m);		
+}
